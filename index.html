@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xyc design — 执韧·向野·孤芜·澄寂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #efe7d2;
+  --paper-warm: #ece4cf;
+  --paper-dark: #ddd2b6;
+  --ink: #15140f;
+  --ink-soft: #2a2620;
+  --ink-mute: #5a5448;
+  --ink-faint: #8b8676;
+  --coral: #ed6f5c;
+  --coral-soft: #f08e7c;
+  --mustard: #e9b94a;
+  --olive: #6e7448;
+  --bone: #f7f1de;
+  --line: rgba(21, 20, 15, 0.16);
+  --line-soft: rgba(21, 20, 15, 0.08);
+  --line-faint: rgba(21, 20, 15, 0.05);
+  --shadow: 0 30px 60px -30px rgba(21, 20, 15, 0.18);
+  --serif: 'Playfair Display', 'Noto Serif SC', 'Times New Roman', serif;
+  --sans: 'Inter Tight', 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --body: 'Inter', 'Noto Sans SC', -apple-system, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--paper); color: var(--ink); }
+body {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(106, 92, 56, 0.07) 0, transparent 28%),
+    radial-gradient(circle at 88% 72%, rgba(106, 92, 56, 0.06) 0, transparent 32%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.16  0 0 0 0 0.12  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: auto, auto, 240px 240px;
+  mix-blend-mode: multiply;
+  opacity: 0.92;
+}
+
+.shell { position: relative; z-index: 2; }
+.container {
+  max-width: 1360px;
+  padding: 0 64px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ---------- fixed side rails ---------- */
+.side-rail {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 36px;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.side-rail.right { right: 0; border-left: 1px solid var(--line-faint); }
+.side-rail.left { left: 0; border-right: 1px solid var(--line-faint); }
+.side-rail .rail-text {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+}
+.side-rail.right .rail-text { writing-mode: vertical-rl; transform: none; }
+.side-rail.left .rail-text { writing-mode: vertical-rl; transform: none; }
+
+/* ---------- topbar ---------- */
+.topbar {
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+  background: var(--paper);
+  position: relative;
+  z-index: 4;
+}
+.topbar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.topbar-inner b { color: var(--ink); font-weight: 600; }
+.topbar-inner .coral { color: var(--coral); }
+.topbar .pulse {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--coral);
+  display: inline-block;
+  margin-right: 6px;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ---------- typography ---------- */
+.label {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--coral);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.label::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: var(--coral);
+  display: inline-block;
+}
+.display {
+  font-family: var(--sans);
+  font-weight: 800;
+  letter-spacing: -0.028em;
+  color: var(--ink);
+  line-height: 1.0;
+}
+.display em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.018em;
+}
+.display .dot { color: var(--coral); }
+.lead {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+.meta {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.roman {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--coral);
+}
+.coord {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+/* ---------- common section header ---------- */
+section { position: relative; padding: 130px 0; }
+.sec-rule {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-bottom: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.sec-rule .roman {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--coral);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+.sec-rule .meta-grp { display: inline-flex; gap: 26px; }
+.sec-rule .dot-mark { color: var(--coral); }
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+.hero-copy {
+  padding: 6vh 0 4vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.hero-copy .label { margin-bottom: 28px; }
+.hero h1 {
+  font-size: clamp(42px, 5.6vw, 84px);
+  line-height: 1.0;
+  margin-bottom: 28px;
+}
+.hero-copy .lead {
+  margin-bottom: 44px;
+  max-width: 52ch;
+  font-size: 17px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* four posters in a row, keeping proportions */
+.hero-posters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  padding-bottom: 6vh;
+  align-items: start;
+}
+.hero-poster {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--bone);
+}
+.hero-poster img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+.hero-poster .tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(239, 231, 210, 0.92);
+  color: var(--ink);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- POSTER SECTION ---------- */
+.poster-section {
+  padding: 120px 0;
+  border-bottom: 1px solid var(--line);
+}
+.poster-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 72px;
+  align-items: center;
+}
+.poster-grid.reverse {
+  direction: rtl;
+}
+.poster-grid.reverse > * {
+  direction: ltr;
+}
+
+.poster-art {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.poster-art img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.poster-art .corner {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-color: var(--paper);
+  border-style: solid;
+  border-width: 0;
+  z-index: 2;
+}
+.poster-art .corner.tl { top: 12px; left: 12px; border-top-width: 1px; border-left-width: 1px; }
+.poster-art .corner.tr { top: 12px; right: 12px; border-top-width: 1px; border-right-width: 1px; }
+.poster-art .corner.bl { bottom: 12px; left: 12px; border-bottom-width: 1px; border-left-width: 1px; }
+.poster-art .corner.br { bottom: 12px; right: 12px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.poster-copy {
+  display: flex;
+  flex-direction: column;
+}
+.poster-copy .season-tag {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--coral);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.poster-copy .season-tag::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: var(--coral);
+  display: inline-block;
+}
+.poster-copy h2 {
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 1.0;
+  margin-bottom: 24px;
+}
+.poster-copy .scene {
+  font-family: var(--body);
+  font-size: 13.5px;
+  color: var(--ink-mute);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.poster-copy .story {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.8;
+}
+
+/* ---------- STORYLINE ---------- */
+.storyline {
+  padding: 100px 0 60px;
+}
+.storyline .sec-rule { margin-bottom: 64px; }
+.storyline h2 {
+  font-size: clamp(36px, 4.4vw, 56px);
+  margin-bottom: 54px;
+  max-width: 28ch;
+}
+.storyline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+.storyline-card {
+  padding: 32px 28px;
+  background: var(--bone);
+  border-radius: 14px;
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(21, 20, 15, 0.06);
+  transition: transform 0.2s ease;
+}
+.storyline-card:hover { transform: translateY(-4px); }
+.storyline-card .num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 54px;
+  font-weight: 500;
+  color: var(--coral);
+  line-height: 0.9;
+  margin-bottom: 14px;
+}
+.storyline-card h4 {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  margin-bottom: 12px;
+}
+.storyline-card p {
+  font-family: var(--body);
+  font-size: 13.5px;
+  color: var(--ink-mute);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+.storyline-card .thumb {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.storyline-card .thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.closing {
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+  max-width: 48ch;
+  margin: 64px auto 0;
+  text-align: center;
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 60px 0 30px;
+  margin-top: 60px;
+}
+.foot-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+.foot-brand .foot-closing {
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+  max-width: 48ch;
+  margin-top: 0;
+}
+.foot-brand p {
+  font-family: var(--body);
+  font-size: 13.5px;
+  color: var(--ink-mute);
+  line-height: 1.55;
+  max-width: 38ch;
+  margin-top: 12px;
+}
+.foot-col h5 {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+.foot-col ul { list-style: none; }
+.foot-col li { margin-bottom: 10px; }
+.foot-col span {
+  font-family: var(--body);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+.foot-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.foot-bottom .right { display: inline-flex; gap: 24px; align-items: center; }
+.foot-mega {
+  margin-top: 60px;
+  padding-top: 0;
+  padding-bottom: 12px;
+  border-top: 1px solid var(--line);
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+.foot-mega .word {
+  font-family: var(--sans);
+  font-weight: 900;
+  font-size: clamp(70px, 13vw, 200px);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--ink);
+  white-space: nowrap;
+  margin-top: 30px;
+  padding-bottom: 0.18em;
+}
+.foot-mega .word em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--coral);
+}
+
+/* ---------- scroll-reveal ---------- */
+[data-reveal] {
+  opacity: 0;
+  translate: 0 28px;
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    translate 900ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, translate;
+}
+[data-reveal][data-revealed='true'] {
+  opacity: 1;
+  translate: 0 0;
+}
+[data-reveal='rise-lg'] {
+  translate: 0 64px;
+}
+
+.hero-copy > [data-reveal]:nth-of-type(1) { --reveal-delay: 0ms; }
+.hero-copy > [data-reveal]:nth-of-type(2) { --reveal-delay: 80ms; }
+.hero-copy > [data-reveal]:nth-of-type(3) { --reveal-delay: 160ms; }
+
+.hero-posters > .hero-poster[data-reveal]:nth-child(1) { --reveal-delay: 240ms; }
+.hero-posters > .hero-poster[data-reveal]:nth-child(2) { --reveal-delay: 320ms; }
+.hero-posters > .hero-poster[data-reveal]:nth-child(3) { --reveal-delay: 400ms; }
+.hero-posters > .hero-poster[data-reveal]:nth-child(4) { --reveal-delay: 480ms; }
+
+.storyline-grid > .storyline-card[data-reveal]:nth-child(1) { --reveal-delay: 0ms; }
+.storyline-grid > .storyline-card[data-reveal]:nth-child(2) { --reveal-delay: 90ms; }
+.storyline-grid > .storyline-card[data-reveal]:nth-child(3) { --reveal-delay: 180ms; }
+.storyline-grid > .storyline-card[data-reveal]:nth-child(4) { --reveal-delay: 270ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1080px) {
+  .container { padding: 0 32px; }
+  .side-rail { display: none; }
+  .hero-posters { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .poster-grid, .poster-grid.reverse { grid-template-columns: 1fr; gap: 40px; }
+  .storyline-grid { grid-template-columns: repeat(2, 1fr); }
+  .foot-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .container { padding: 0 20px; }
+  section { padding: 80px 0; }
+  .poster-section { padding: 80px 0; }
+  .hero h1 { font-size: 38px; }
+  .hero-posters { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .poster-copy h2 { font-size: 36px; }
+  .storyline-grid { grid-template-columns: 1fr; }
+  .storyline { padding: 60px 0 40px; }
+  .foot-grid { grid-template-columns: 1fr; }
+  .foot-mega .word { font-size: 42px; }
+}
+</style>
+</head>
+<body>
+
+<div class="side-rail right">
+  <span class="rail-text">冬·澄寂 &nbsp;—&nbsp; 秋·孤芜 &nbsp;—&nbsp; 夏·向野 &nbsp;—&nbsp; 春·执韧</span>
+</div>
+<div class="side-rail left">
+  <span class="rail-text">春·执韧 &nbsp;—&nbsp; 夏·向野 &nbsp;—&nbsp; 秋·孤芜 &nbsp;—&nbsp; 冬·澄寂</span>
+</div>
+<div class="shell">
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <span><b>xyc design</b> &nbsp;·&nbsp; 四序 &nbsp;·&nbsp; 2026</span>
+    <span>
+      <span>春 · 夏 · 秋 · 冬</span>
+      &nbsp;&nbsp;
+      <span class="coral"><span class="pulse"></span></span>
+    </span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-copy">
+      <span class="label" data-reveal>xyc design <span style="color:var(--ink-faint);font-weight:500;margin-left:4px;">· 四序</span></span>
+      <h1 class="display" data-reveal>执韧<span class="dot">·</span>向野<span class="dot">·</span>孤芜<span class="dot">·</span>澄寂</h1>
+      <p class="lead" data-reveal>四季轮转，亦是人生轮转。春生、夏往、秋落、冬藏，草木的一次荣枯，恰如人的一生。本系列四张海报，以四季为载体，以少女与草木为双意象，完整复刻普通人从年少挣扎、青春向往、中年幻灭、晚年自洽的心境变化。将成长中的抗争、渴望、孤独与和解，凝练成四帧安静却有力量的画面，讲述一场所有人都必经的人生旅程。</p>
+    </div>
+    <div class="hero-posters">
+      <div class="hero-poster" data-reveal>
+        <span class="tag">春 · 执韧</span>
+        <img src="./春·执韧.jpg" alt="春·执韧" fetchpriority="high">
+      </div>
+      <div class="hero-poster" data-reveal>
+        <span class="tag">夏 · 向野</span>
+        <img src="./夏·向野.jpg" alt="夏·向野" fetchpriority="high">
+      </div>
+      <div class="hero-poster" data-reveal>
+        <span class="tag">秋 · 孤芜</span>
+        <img src="./秋·孤芜.jpg" alt="秋·孤芜" fetchpriority="high">
+      </div>
+      <div class="hero-poster" data-reveal>
+        <span class="tag">冬 · 澄寂</span>
+        <img src="./冬·澄寂.jpg" alt="冬·澄寂" fetchpriority="high">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 春·执韧 -->
+<section class="poster-section">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">春</span>
+      <span class="meta-grp">
+        <span>Spring · Resilience</span>
+        <span class="dot-mark">•</span>
+        <span>执韧</span>
+      </span>
+      <span>01 / 04</span>
+    </div>
+    <div class="poster-grid">
+      <div class="poster-art" data-reveal>
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <img src="./春·执韧.jpg" alt="春·执韧" loading="lazy" decoding="async">
+      </div>
+      <div class="poster-copy" data-reveal>
+        <span class="season-tag">春 · Spring</span>
+        <h2 class="display">春<span class="dot">·</span><em>执韧</em><span class="dot">.</span></h2>
+        <p class="scene">画面：雨中石缝，女孩撑红伞蹲坐，石缝野草在雨里倔强生长</p>
+        <p class="story">这是故事的起点，也是人生的序章。女孩被困在逼仄、湿冷的石缝之间，暴雨倾盆，岩壁湿滑，环境没有给她任何退路。她没有放弃，也没有崩溃，只是默默地撑开那把小小的红伞，在方寸之间，为自己守住了一片不湿的角落。一旁的野草也是一样：扎根在贫瘠的岩缝里，被雨水反复冲刷，却依旧挺直茎干，牢牢扒住岩石。不是轰轰烈烈的反抗，而是在绝境里不低头、不放弃的韧性。就像我们每个人起步的阶段：出身和环境无法选择，但我们可以守住自己的方寸之地，用一点点倔强，对抗生活的风雨。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 夏·向野 -->
+<section class="poster-section">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">夏</span>
+      <span class="meta-grp">
+        <span>Summer · Yearning</span>
+        <span class="dot-mark">•</span>
+        <span>向野</span>
+      </span>
+      <span>02 / 04</span>
+    </div>
+    <div class="poster-grid reverse">
+      <div class="poster-art" data-reveal>
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <img src="./夏·向野.jpg" alt="夏·向野" loading="lazy" decoding="async">
+      </div>
+      <div class="poster-copy" data-reveal>
+        <span class="season-tag">夏 · Summer</span>
+        <h2 class="display">夏<span class="dot">·</span><em>向野</em><span class="dot">.</span></h2>
+        <p class="scene">画面：室内窗边，女孩坐在盆栽旁的秋千上，蕨类枝条拼命向窗外森林伸展</p>
+        <p class="story">这是故事的转折，也是人生的少年心气。女孩从石缝里走了出来，却又被困在了一间小小的屋子里。她望着窗外洒满阳光的森林。绿植的根系被牢牢锁在花盆里，可枝叶却不顾一切地穿过窗沿，朝着旷野、朝着光亮疯长。她和这盆绿植，都被现实的"花盆"困住了，但谁也没停下向外生长的脚步。心里装着远方的人，永远不会被方寸之地困住。就像我们年轻时：被学业、被生活的条条框框束缚着，却依然心怀旷野，总想着要去外面的世界闯一闯。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 秋·孤芜 -->
+<section class="poster-section">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">秋</span>
+      <span class="meta-grp">
+        <span>Autumn · Solitude</span>
+        <span class="dot-mark">•</span>
+        <span>孤芜</span>
+      </span>
+      <span>03 / 04</span>
+    </div>
+    <div class="poster-grid">
+      <div class="poster-art" data-reveal>
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <img src="./秋·孤芜.jpg" alt="秋·孤芜" loading="lazy" decoding="async">
+      </div>
+      <div class="poster-copy" data-reveal>
+        <span class="season-tag">秋 · Autumn</span>
+        <h2 class="display">秋<span class="dot">·</span><em>孤芜</em><span class="dot">.</span></h2>
+        <p class="scene">画面：镜面楼宇间的河道，女孩划着红舟穿行，两岸是千篇一律的秋林</p>
+        <p class="story">这是故事的幻灭，也是人生的清醒时刻。女孩终于划着小船，离开了那间小屋，来到了她曾经无比向往的"大世界"。可当她真正抵达，却发现这里并没有想象中的精彩：两岸的秋林长得一模一样，楼宇是镜面的倒影，风景重复又单调。她划了一路，身边始终只有自己，热闹的表象之下，是深入骨髓的孤单。我们拼尽全力奔赴的远方，很多时候不过是千篇一律的重复。见过了形形色色的人和事，才发现世界大同，曾经的满腔热血，也在一次次失望里慢慢冷却。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 冬·澄寂 -->
+<section class="poster-section">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">冬</span>
+      <span class="meta-grp">
+        <span>Winter · Serenity</span>
+        <span class="dot-mark">•</span>
+        <span>澄寂</span>
+      </span>
+      <span>04 / 04</span>
+    </div>
+    <div class="poster-grid reverse">
+      <div class="poster-art" data-reveal>
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <img src="./冬·澄寂.jpg" alt="冬·澄寂" loading="lazy" decoding="async">
+      </div>
+      <div class="poster-copy" data-reveal>
+        <span class="season-tag">冬 · Winter</span>
+        <h2 class="display">冬<span class="dot">·</span><em>澄寂</em><span class="dot">.</span></h2>
+        <p class="scene">画面：无垠荒原，女孩坐在红色长椅上，望着晴空与流云</p>
+        <p class="story">这是故事的终章，也是人生的和解。女孩不再撑伞，不再眺望，也不再划船。她停在了一片空旷的荒原上，就那样静静地坐着，看着风吹过，云飘过。曾经让她痛苦的困境、让她心动的远方、让她失落的幻灭，都成了过去式。荒原上没有一株草木，所有的挣扎、渴望、追逐，都在这里归于沉寂。但这不是死寂，而是一种通透的平静。放下了所有执念，内心终于变得澄澈、安宁。就像人走过大半生，终于不再向外索取答案，学会了和自己、和世界温柔相处。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 完整故事线 -->
+<section class="storyline">
+  <div class="container">
+    <div class="sec-rule">
+      <span class="roman">终</span>
+      <span class="meta-grp">
+        <span>完整故事线</span>
+        <span class="dot-mark">•</span>
+        <span>一个普通人的一生</span>
+      </span>
+      <span>春 · 夏 · 秋 · 冬</span>
+    </div>
+    <h2 class="display" data-reveal>一生，像草木的<em>四季荣枯</em><span class="dot">.</span></h2>
+    <div class="storyline-grid">
+      <div class="storyline-card" data-reveal>
+        <div class="num">01</div>
+        <h4>春 · 执韧</h4>
+        <p>年少时，在困境里咬牙撑伞，守住自己的一方天地，学会了执韧与接纳。</p>
+        <div class="thumb"><img src="./春·执韧.jpg" alt="春·执韧" loading="lazy" decoding="async"></div>
+      </div>
+      <div class="storyline-card" data-reveal>
+        <div class="num">02</div>
+        <h4>夏 · 向野</h4>
+        <p>年轻时，心怀旷野，被现实困住，却依然向往远方，眼里有光。</p>
+        <div class="thumb"><img src="./夏·向野.jpg" alt="夏·向野" loading="lazy" decoding="async"></div>
+      </div>
+      <div class="storyline-card" data-reveal>
+        <div class="num">03</div>
+        <h4>秋 · 孤芜</h4>
+        <p>中年时，终于奔赴了远方，发现世界大同，热闹表象下只剩孤单荒芜。</p>
+        <div class="thumb"><img src="./秋·孤芜.jpg" alt="秋·孤芜" loading="lazy" decoding="async"></div>
+      </div>
+      <div class="storyline-card" data-reveal>
+        <div class="num">04</div>
+        <h4>冬 · 澄寂</h4>
+        <p>暮年时，放下了所有执念，不再追逐、挣扎，内心归于澄寂与安宁。</p>
+        <div class="thumb"><img src="./冬·澄寂.jpg" alt="冬·澄寂" loading="lazy" decoding="async"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-closing">人的一生，无非自困厄中执韧生长，于方寸中心向旷野，在繁华里遇见荒芜，于寂静中读懂圆满。所有的挣扎与渴望、失落与释然，都是成长的必经之路。四季终有落幕，人生终会自洽，所有走过的路，最终都让我们成为更平静、更通透的自己。</p>
+      </div>
+      <div class="foot-col">
+        <h5>系列</h5>
+        <ul>
+          <li><span>春 · 执韧</span></li>
+          <li><span>夏 · 向野</span></li>
+          <li><span>秋 · 孤芜</span></li>
+          <li><span>冬 · 澄寂</span></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>主题</h5>
+        <ul>
+          <li><span>Resilience</span></li>
+          <li><span>Yearning</span></li>
+          <li><span>Solitude</span></li>
+          <li><span>Serenity</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span><b style="color:var(--ink);">xyc design</b> · 四序 · 2026</span>
+      <span class="right">
+        <span>执韧 · 向野 · 孤芜 · 澄寂</span>
+        <span style="color:var(--coral);">● 2026</span>
+      </span>
+    </div>
+    <div class="foot-mega">
+      <div class="word" data-reveal="rise-lg">xyc <em>design</em>.</div>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var elements = document.querySelectorAll('[data-reveal]:not([data-revealed])');
+  if (!elements.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    for (var i = 0; i < elements.length; i++) elements[i].dataset.revealed = 'true';
+    return;
+  }
+  var observer = new IntersectionObserver(function (entries) {
+    for (var i = 0; i < entries.length; i++) {
+      if (!entries[i].isIntersecting) continue;
+      entries[i].target.dataset.revealed = 'true';
+      observer.unobserve(entries[i].target);
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  for (var j = 0; j < elements.length; j++) observer.observe(elements[j]);
+})();
+</script>
+
+</body>
+</html>
